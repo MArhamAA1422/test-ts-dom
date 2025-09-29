@@ -13,6 +13,10 @@ type userBoardType = {
    finished: taskObject[],
 } | null;
 
+type KanbanBoardType = {
+   string: userBoardType,
+}
+
 function getData(key: string) {
    const jsonValue = localStorage.getItem(key);
 
@@ -33,9 +37,9 @@ function getCurrentUserBoard(currUser: any) {
 
    let currUserBoard: userBoardType = null;
 
-   for (let key of KanbanBoard) {
+   for (let key in KanbanBoard) {
       if (key === currUser.id) {
-         currUserBoard = key;
+         currUserBoard = KanbanBoard[key];
          break;
       }
    }
@@ -44,12 +48,11 @@ function getCurrentUserBoard(currUser: any) {
 }
 
 function main() {
-   const currUser = currentUser();
-   const userBoard: userBoardType = getCurrentUserBoard(currUser);
+   const userBoard: userBoardType = getCurrentUserBoard(currentUser());
 
    console.log(userBoard);
 
-   loadKanbanBoard(userBoard);
+   loadKanbanBoard();
 
    (document.querySelector('.js-todo-add') as Element).addEventListener('click', function() {
       addTask('todo');
@@ -66,9 +69,122 @@ function main() {
    (document.querySelector('.js-finished-add') as Element).addEventListener('click', function() {
       addTask('finished');
    });
-} 
+}
 
-function loadKanbanBoard(userBoard: userBoardType) {
+function addTask(section: string) {
+   (document.querySelector(`.new-task-info-${section}`) as Element).classList.remove('hidden');
+
+   (document.querySelector(`.add-task-button-${section}`) as Element)
+      .addEventListener('click', function() {
+
+         const taskTitle = (document.querySelector(`.js-${section}-title`) as HTMLInputElement).value;
+
+         const taskDescription = (document.querySelector(`.js-${section}-description`) as HTMLInputElement).value;
+
+         // console.log(taskTitle, taskDescription);
+
+         (document.querySelector(`.new-task-info-${section}`) as Element).classList.add('hidden');
+
+         addTaskToUserBoard(section, taskTitle, taskDescription);
+      });
+}
+
+function isAlpha(v: any) {
+   if (v >= 'a' && v <= 'z') return true;
+   if (v >= 'A' && v <= 'Z') return true;
+   return false;
+}
+
+function addTaskToUserBoard(section: string, title: string, description: string) {
+   let valid = false;
+
+   for (let c of title) {
+      if (isAlpha(c)) {
+         valid = true;
+      }
+   }
+
+   if (!valid) {
+      alert('Please write valid task title');
+      return;
+   }
+
+   let userBoard: userBoardType = getCurrentUserBoard(currentUser());
+
+   if (!userBoard) {
+      userBoard = {
+         todo: [],
+         inprogress: [],
+         testing: [],
+         finished: [],
+      };
+   }
+
+   switch(section) {
+      case 'todo':
+         userBoard.todo.push({
+            title,
+            description,
+         });
+         break;
+      case 'inprogress':
+         userBoard.inprogress.push({
+            title,
+            description,
+         });
+         break;
+      case 'testing':
+         userBoard.testing.push({
+            title,
+            description,
+         });
+         break;
+      case 'finished':
+         userBoard.finished.push({
+            title,
+            description,
+         });
+   }
+
+   let KanbanBoard = getData('kanbanBoard');
+   const currUserId = currentUser().id;
+
+   if (!KanbanBoard) {
+      KanbanBoard = {
+         [currUserId]: {},
+      }
+   }
+
+   let userFound = false;
+
+   for (let key in KanbanBoard) {
+      if (key === currUserId) {
+         userFound = true;
+      }
+   }
+
+   if (!userFound) {
+      KanbanBoard = {
+         ...KanbanBoard,
+         [currUserId]: {},
+      }
+   }
+
+   KanbanBoard[currUserId] = userBoard;
+
+   setData('kanbanBoard', JSON.stringify(KanbanBoard));
+
+   loadKanbanBoard();
+};
+
+function setData(key: string, data: string) {
+   console.log(data);
+   localStorage.setItem(key, data);
+}
+
+function loadKanbanBoard() {
+   const userBoard: userBoardType = getCurrentUserBoard(currentUser());
+
    let todoHTML: string = '';
    let inProgressHTML: string = '';
    let testingHTML: string = '';
@@ -203,47 +319,4 @@ function loadKanbanBoard(userBoard: userBoardType) {
    (document.querySelector('.testing-tasks') as HTMLElement).innerHTML = testingHTML;
 
    (document.querySelector('.finished-tasks') as HTMLElement).innerHTML = finishedHTML;
-}
-
-function addTask(section: string) {
-   (document.querySelector(`.new-task-info-${section}`) as Element).classList.remove('hidden');
-
-   (document.querySelector(`.add-task-button-${section}`) as Element)
-      .addEventListener('click', function() {
-
-         const taskTitle = (document.querySelector(`.js-${section}-title`) as HTMLInputElement).value;
-
-         const taskDescription = (document.querySelector(`.js-${section}-description`) as HTMLInputElement).value;
-
-         // console.log(taskTitle, taskDescription);
-
-         (document.querySelector(`.new-task-info-${section}`) as Element).classList.add('hidden');
-
-         addTaskToUserBoard(section, taskTitle, taskDescription);
-      });
-}
-
-function isAlpha(v: any) {
-   if (v >= 'a' && v <= 'z') return true;
-   if (v >= 'A' && v <= 'Z') return true;
-   return false;
-}
-
-function addTaskToUserBoard(section: string, taskTitle: string, taskDescription: string) {
-   let valid = false;
-
-   for (let c of taskTitle) {
-      if (isAlpha(c)) {
-         valid = true;
-      }
-   }
-
-   if (!valid) {
-      alert('Please write valid task title');
-      return;
-   }
-};
-
-function setData(key: string, data: string) {
-   localStorage.setItem(key, data);
 }

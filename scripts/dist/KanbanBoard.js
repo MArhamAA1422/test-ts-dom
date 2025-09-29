@@ -15,19 +15,18 @@ function getCurrentUserBoard(currUser) {
         return null;
     }
     let currUserBoard = null;
-    for (let key of KanbanBoard) {
+    for (let key in KanbanBoard) {
         if (key === currUser.id) {
-            currUserBoard = key;
+            currUserBoard = KanbanBoard[key];
             break;
         }
     }
     return currUserBoard;
 }
 function main() {
-    const currUser = currentUser();
-    const userBoard = getCurrentUserBoard(currUser);
+    const userBoard = getCurrentUserBoard(currentUser());
     console.log(userBoard);
-    loadKanbanBoard(userBoard);
+    loadKanbanBoard();
     document.querySelector('.js-todo-add').addEventListener('click', function () {
         addTask('todo');
     });
@@ -41,7 +40,99 @@ function main() {
         addTask('finished');
     });
 }
-function loadKanbanBoard(userBoard) {
+function addTask(section) {
+    document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
+    document.querySelector(`.add-task-button-${section}`)
+        .addEventListener('click', function () {
+        const taskTitle = document.querySelector(`.js-${section}-title`).value;
+        const taskDescription = document.querySelector(`.js-${section}-description`).value;
+        // console.log(taskTitle, taskDescription);
+        document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
+        addTaskToUserBoard(section, taskTitle, taskDescription);
+    });
+}
+function isAlpha(v) {
+    if (v >= 'a' && v <= 'z')
+        return true;
+    if (v >= 'A' && v <= 'Z')
+        return true;
+    return false;
+}
+function addTaskToUserBoard(section, title, description) {
+    let valid = false;
+    for (let c of title) {
+        if (isAlpha(c)) {
+            valid = true;
+        }
+    }
+    if (!valid) {
+        alert('Please write valid task title');
+        return;
+    }
+    let userBoard = getCurrentUserBoard(currentUser());
+    if (!userBoard) {
+        userBoard = {
+            todo: [],
+            inprogress: [],
+            testing: [],
+            finished: [],
+        };
+    }
+    switch (section) {
+        case 'todo':
+            userBoard.todo.push({
+                title,
+                description,
+            });
+            break;
+        case 'inprogress':
+            userBoard.inprogress.push({
+                title,
+                description,
+            });
+            break;
+        case 'testing':
+            userBoard.testing.push({
+                title,
+                description,
+            });
+            break;
+        case 'finished':
+            userBoard.finished.push({
+                title,
+                description,
+            });
+    }
+    let KanbanBoard = getData('kanbanBoard');
+    const currUserId = currentUser().id;
+    if (!KanbanBoard) {
+        KanbanBoard = {
+            [currUserId]: {},
+        };
+    }
+    let userFound = false;
+    for (let key in KanbanBoard) {
+        if (key === currUserId) {
+            userFound = true;
+        }
+    }
+    if (!userFound) {
+        KanbanBoard = {
+            ...KanbanBoard,
+            [currUserId]: {},
+        };
+    }
+    KanbanBoard[currUserId] = userBoard;
+    setData('kanbanBoard', JSON.stringify(KanbanBoard));
+    loadKanbanBoard();
+}
+;
+function setData(key, data) {
+    console.log(data);
+    localStorage.setItem(key, data);
+}
+function loadKanbanBoard() {
+    const userBoard = getCurrentUserBoard(currentUser());
     let todoHTML = '';
     let inProgressHTML = '';
     let testingHTML = '';
@@ -164,39 +255,5 @@ function loadKanbanBoard(userBoard) {
     document.querySelector('.inprogress-tasks').innerHTML = inProgressHTML;
     document.querySelector('.testing-tasks').innerHTML = testingHTML;
     document.querySelector('.finished-tasks').innerHTML = finishedHTML;
-}
-function addTask(section) {
-    document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
-    document.querySelector(`.add-task-button-${section}`)
-        .addEventListener('click', function () {
-        const taskTitle = document.querySelector(`.js-${section}-title`).value;
-        const taskDescription = document.querySelector(`.js-${section}-description`).value;
-        // console.log(taskTitle, taskDescription);
-        document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
-        addTaskToUserBoard(section, taskTitle, taskDescription);
-    });
-}
-function isAlpha(v) {
-    if (v >= 'a' && v <= 'z')
-        return true;
-    if (v >= 'A' && v <= 'Z')
-        return true;
-    return false;
-}
-function addTaskToUserBoard(section, taskTitle, taskDescription) {
-    let valid = false;
-    for (let c of taskTitle) {
-        if (isAlpha(c)) {
-            valid = true;
-        }
-    }
-    if (!valid) {
-        alert('Please write valid task title');
-        return;
-    }
-}
-;
-function setData(key, data) {
-    localStorage.setItem(key, data);
 }
 //# sourceMappingURL=KanbanBoard.js.map
