@@ -44,6 +44,7 @@ function addTask(section) {
     document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
     document.querySelector(`.add-task-button-${section}`)
         .addEventListener('click', function () {
+        console.log('clicked');
         const taskTitle = document.querySelector(`.js-${section}-title`).value;
         const taskDescription = document.querySelector(`.js-${section}-description`).value;
         // console.log(taskTitle, taskDescription);

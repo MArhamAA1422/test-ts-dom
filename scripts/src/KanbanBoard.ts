@@ -76,6 +76,7 @@ function addTask(section: string) {
 
    (document.querySelector(`.add-task-button-${section}`) as Element)
       .addEventListener('click', function() {
+         console.log('clicked');
 
          const taskTitle = (document.querySelector(`.js-${section}-title`) as HTMLInputElement).value;
 
