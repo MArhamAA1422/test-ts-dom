@@ -1,0 +1,142 @@
+.main {
+   display: flex;
+   flex-direction: column;
+   row-gap: 16px;
+   margin: 20px;
+   border: none;
+}
+
+.heading {
+   display: flex;
+   justify-content: right;
+   margin-top: 10px;
+   margin-right: 10px;
+}
+
+.log-button {
+   padding: 10px;
+   font-size: 16px;
+   color: white;
+   background-color: black;
+   border: none;
+}
+
+.section {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   column-gap: 16px;
+   padding: 5px;
+   flex-wrap: wrap;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+   align-items: center;
+}
+
+.section-title {
+   font-size: 30px;
+   font-weight: bold;
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+
+.new-task-info {
+   display: flex;
+   flex-direction: column;
+   row-gap: 5px;
+}
+
+.new-task-input {
+   padding: 20px;
+   font-size: 16px;
+}
+
+.add-task-button {
+   font-size: 16px;
+   padding: 5px;
+   cursor: pointer;
+}
+
+.task-container {
+   flex: 1;
+   display: flex;
+   flex-direction: row;
+   column-gap: 10px;
+   padding: 5px;
+   flex-wrap: wrap;
+}
+
+.task {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   border: solid;
+   border-width: 1px;
+}
+
+.task-title {
+   font-size: 20px;
+   text-decoration: underline;
+}
+
+.task-description {
+   font-size: 16px;
+}
+
+.task-move-button-container {
+   margin-top: 20px;
+   display: flex;
+   flex-direction: column;
+   row-gap: 5px;
+}
+
+.move-button, .delete-button, .assigned-users-button, .add-user-button, .add-new-task-button {
+   padding: 8px;
+   font-size: 14px;
+   color: black;
+   background-color: greenyellow;
+   border: none;
+   border-radius: 10px;
+   cursor: pointer;
+}
+
+.delete-button {
+   background-color: red;
+}
+
+.move-button:active, .delete-button:active, .add-user-button:active {
+   opacity: 0.5;
+}
+
+.assigned-users-button, .add-user-button {
+   background-color: black;
+   color: white
+}
+
+.assigned-users-list {
+   display: flex;
+   flex-direction: column;
+}
+
+.task-assigned-users {
+   margin-top: 20px;
+   display: flex;
+   flex-direction: column;
+   row-gap: 5px;
+   margin-bottom: 10px;
+}
+
+.input-username {
+   margin-top: 20px;
+   padding: 4px;
+}
+
+.add-new-task-button {
+   background-color: lightblue;
+   font-size: 16px;
+   border-radius: 0;
+   margin-bottom: 5px;
+}
+
+.hidden {
+   display: none;
+}
