@@ -27,28 +27,46 @@
          <input class="new-task-input" placeholder="Task description">
          <button class="add-task-button">Add</button>
       </div>
-      <div class="task-container">
-        <div class="task">
-          <div class="task-title">Task 1</div>
-          <div class="task-description">Some texts here</div>
-          <div class="task-assigned-users">
-            <button class="assigned-users-button">See Assigned Users</button>
+      <div class="task-container todo-tasks">
+      </div>
+    </div>
 
-            <div class="assigned-users-list hidden">
-               <div class="userlist-name">User 1</div>
-            </div>
+    <div id="inprogress" class="section">
+      <div class="section-title">In Progress Section</div>
+      <button class="add-new-task-button">Add Task
+      </button>
+      <div class="new-task-info hidden">
+         <input class="new-task-input" placeholder="Title goes here">
+         <input class="new-task-input" placeholder="Task description">
+         <button class="add-task-button">Add</button>
+      </div>
+      <div class="task-container inprogress-tasks">
+      </div>
+    </div>
 
-            <input class="input-username" placeholder="Write username">
-            <button class="add-user-button">Add User</button>
-          </div>
-          <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
-          <div class="task-move-button-container">
-            <button class="move-button">Move To In-Progress</button>
-            <button class="move-button">Move To Testing</button>
-            <button class="move-button">Move To Finished</button>
-            <button class="delete-button">Delete This Task</button>
-          </div>
-        </div>
+    <div id="testing" class="section">
+      <div class="section-title">Testing Section</div>
+      <button class="add-new-task-button">Add Task
+      </button>
+      <div class="new-task-info hidden">
+         <input class="new-task-input" placeholder="Title goes here">
+         <input class="new-task-input" placeholder="Task description">
+         <button class="add-task-button">Add</button>
+      </div>
+      <div class="task-container testing-tasks">
+      </div>
+    </div>
+
+    <div id="finished" class="section">
+      <div class="section-title">Finished Section</div>
+      <button class="add-new-task-button">Add Task
+      </button>
+      <div class="new-task-info hidden">
+         <input class="new-task-input" placeholder="Title goes here">
+         <input class="new-task-input" placeholder="Task description">
+         <button class="add-task-button">Add</button>
+      </div>
+      <div class="task-container finished-tasks">
       </div>
     </div>
    </div>
