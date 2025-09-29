@@ -28,8 +28,17 @@ function main() {
     const userBoard = getCurrentUserBoard(currUser);
     console.log(userBoard);
     loadKanbanBoard(userBoard);
-    document.querySelector('.add-new-task-button').addEventListener('click', function () {
-        console.log('here');
+    document.querySelector('.js-todo-add').addEventListener('click', function () {
+        addTask('todo');
+    });
+    document.querySelector('.js-inprogress-add').addEventListener('click', function () {
+        addTask('inprogress');
+    });
+    document.querySelector('.js-testing-add').addEventListener('click', function () {
+        addTask('testing');
+    });
+    document.querySelector('.js-finished-add').addEventListener('click', function () {
+        addTask('finished');
     });
 }
 function loadKanbanBoard(userBoard) {
@@ -156,6 +165,37 @@ function loadKanbanBoard(userBoard) {
     document.querySelector('.testing-tasks').innerHTML = testingHTML;
     document.querySelector('.finished-tasks').innerHTML = finishedHTML;
 }
+function addTask(section) {
+    document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
+    document.querySelector(`.add-task-button-${section}`)
+        .addEventListener('click', function () {
+        const taskTitle = document.querySelector(`.js-${section}-title`).value;
+        const taskDescription = document.querySelector(`.js-${section}-description`).value;
+        // console.log(taskTitle, taskDescription);
+        document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
+        addTaskToUserBoard(section, taskTitle, taskDescription);
+    });
+}
+function isAlpha(v) {
+    if (v >= 'a' && v <= 'z')
+        return true;
+    if (v >= 'A' && v <= 'Z')
+        return true;
+    return false;
+}
+function addTaskToUserBoard(section, taskTitle, taskDescription) {
+    let valid = false;
+    for (let c of taskTitle) {
+        if (isAlpha(c)) {
+            valid = true;
+        }
+    }
+    if (!valid) {
+        alert('Please write valid task title');
+        return;
+    }
+}
+;
 function setData(key, data) {
     localStorage.setItem(key, data);
 }
