@@ -36,6 +36,8 @@ function main() {
       return;
    }
 
+   (document.querySelector('.js-display-username') as Element).innerHTML = `User: <span class="username">${currUser.username}</span>`;
+
    const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
    // console.log(kanbanBoard, typeof kanbanBoard);

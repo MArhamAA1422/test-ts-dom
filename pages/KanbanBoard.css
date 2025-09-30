@@ -24,6 +24,22 @@
    cursor: pointer;
 }
 
+.right-heading {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   column-gap: 5px;
+}
+
+.display-username {
+   font-size: 18px;
+}
+
+.username {
+   color: green;
+   font-weight: bold;
+}
+
 .log-button {
    padding: 10px;
    font-size: 16px;

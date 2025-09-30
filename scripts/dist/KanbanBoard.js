@@ -18,6 +18,7 @@ function main() {
         loadLoginPage();
         return;
     }
+    document.querySelector('.js-display-username').innerHTML = `User: <span class="username">${currUser.username}</span>`;
     const kanbanBoard = getData('kanbanBoard');
     // console.log(kanbanBoard, typeof kanbanBoard);
     loadKanbanBoard();
