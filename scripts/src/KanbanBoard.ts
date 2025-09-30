@@ -1,21 +1,16 @@
 main();
 
-type taskObject = {
+type TaskType = 'todo' | 'inprogress' | 'testing' | 'finished';
+
+type Task = {
+   id: number,
    title: string,
+   type: TaskType,
    description?: string,
    assignedUser?: string[],
 };
 
-type userBoardType = {
-   todo: taskObject[],
-   inprogress: taskObject[],
-   testing: taskObject[],
-   finished: taskObject[],
-} | null;
-
-type KanbanBoardType = {
-   string: userBoardType,
-}
+type KanbanBoardType = Task[];
 
 function getData(key: string) {
    const jsonValue = localStorage.getItem(key);
@@ -29,28 +24,10 @@ function currentUser() {
    return getData('currUser');
 }
 
-function getCurrentUserBoard(currUser: any) {
-   const KanbanBoard = getData('kanbanBoard');
-   if (KanbanBoard === null) {
-      return null;
-   }
-
-   let currUserBoard: userBoardType = null;
-
-   for (let key in KanbanBoard) {
-      if (key === currUser.id) {
-         currUserBoard = KanbanBoard[key];
-         break;
-      }
-   }
-
-   return currUserBoard;
-}
-
 function main() {
-   const userBoard: userBoardType = getCurrentUserBoard(currentUser());
+   const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
-   console.log(userBoard);
+   console.log(kanbanBoard, typeof kanbanBoard);
 
    loadKanbanBoard();
 
@@ -68,6 +45,15 @@ function main() {
 
    (document.querySelector('.js-finished-add') as Element).addEventListener('click', function() {
       addTask('finished');
+   });
+
+   const deleteButtons = (document.querySelectorAll('.delete-button') as any);
+
+   deleteButtons.forEach(function(button: any) {
+      button.addEventListener('click', function() {
+         const taskId = button.dataset.taskId;
+         deleteTask(taskId);
+      });
    });
 }
 
@@ -90,6 +76,21 @@ function addTask(section: string) {
       });
 }
 
+function deleteTask(taskId: number) {
+   let kanbanBoard: KanbanBoardType = getData('kanbanBoard');
+
+   kanbanBoard = kanbanBoard.filter(function(task) {
+      if (task.id - taskId === 0) return false;
+      return true;
+   });
+
+   console.log(kanbanBoard);
+
+   setData('kanbanBoard', JSON.stringify(kanbanBoard));
+
+   main();
+}
+
 function isAlpha(v: any) {
    if (v >= 'a' && v <= 'z') return true;
    if (v >= 'A' && v <= 'Z') return true;
@@ -110,206 +111,179 @@ function addTaskToUserBoard(section: string, title: string, description: string)
       return;
    }
 
-   let userBoard: userBoardType = getCurrentUserBoard(currentUser());
+   let kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
-   if (!userBoard) {
-      userBoard = {
-         todo: [],
-         inprogress: [],
-         testing: [],
-         finished: [],
-      };
-   }
+   if (!kanbanBoard) kanbanBoard = [];
+
+   let ID = getData('taskId');
+   if (ID === null) ID = 0;
+
+   const id = ID + 1;
+   setData('taskId', JSON.stringify(ID+1));
 
    switch(section) {
       case 'todo':
-         userBoard.todo.push({
+         kanbanBoard.push({
+            id,
             title,
+            type: 'todo',
             description,
+            assignedUser: [],
          });
          break;
       case 'inprogress':
-         userBoard.inprogress.push({
+         kanbanBoard.push({
+            id,
             title,
+            type: 'inprogress',
             description,
+            assignedUser: [],
          });
          break;
       case 'testing':
-         userBoard.testing.push({
+         kanbanBoard.push({
+            id,
             title,
+            type: 'testing',
             description,
+            assignedUser: [],
          });
          break;
       case 'finished':
-         userBoard.finished.push({
+         kanbanBoard.push({
+            id,
             title,
+            type: 'finished',
             description,
+            assignedUser: [],
          });
    }
 
-   let KanbanBoard = getData('kanbanBoard');
-   const currUserId = currentUser().id;
-
-   if (!KanbanBoard) {
-      KanbanBoard = {
-         [currUserId]: {},
-      }
-   }
-
-   let userFound = false;
-
-   for (let key in KanbanBoard) {
-      if (key === currUserId) {
-         userFound = true;
-      }
-   }
-
-   if (!userFound) {
-      KanbanBoard = {
-         ...KanbanBoard,
-         [currUserId]: {},
-      }
-   }
-
-   KanbanBoard[currUserId] = userBoard;
-
-   setData('kanbanBoard', JSON.stringify(KanbanBoard));
-
-   loadKanbanBoard();
+   setData('kanbanBoard', JSON.stringify(kanbanBoard));
+   main();
 };
 
 function setData(key: string, data: string) {
-   console.log(data);
    localStorage.setItem(key, data);
 }
 
 function loadKanbanBoard() {
-   const userBoard: userBoardType = getCurrentUserBoard(currentUser());
+   const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
    let todoHTML: string = '';
    let inProgressHTML: string = '';
    let testingHTML: string = '';
    let finishedHTML: string ='';
 
-   if (userBoard) {
-      userBoard.todo.forEach(function(task) {
+   if (kanbanBoard) {
+      kanbanBoard.forEach(function(task) {
          const description = task.description ? task.description : '';
 
-         todoHTML += `
-            <div class="task">
-               <div class="task-title">${task.title}</div>
-               <div class="task-description">
-                  ${description}
-               </div>
-               <div class="task-assigned-users">
-                  <button class="assigned-users-button">See Assigned Users</button>
-
-                  <div class="assigned-users-list hidden">
-                     <div class="userlist-name">User 1</div>
+         if (task.type === 'todo') {
+            todoHTML += `
+               <div class="task task-${task.id}">
+                  <div class="task-title">${task.title}</div>
+                  <div class="task-description">
+                     ${description}
                   </div>
+                  <div class="task-assigned-users">
+                     <button class="assigned-users-button">See Assigned Users</button>
 
-                  <input class="input-username" placeholder="Write username">
-                  <button class="add-user-button">Add User</button>
-               </div>
-               <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
-               <div class="task-move-button-container">
-                  <button class="move-button">Move To In-Progress</button>
-                  <button class="move-button">Move To Testing</button>
-                  <button class="move-button">Move To Finished</button>
-                  <button class="delete-button">Delete This Task</button>
-               </div>
-            </div>
-         `;
-      });
+                     <div class="assigned-users-list hidden">
+                        <div class="userlist-name"></div>
+                     </div>
 
-      userBoard.inprogress.forEach(function(task) {
-         const description = task.description ? task.description : '';
-         
-         inProgressHTML += `
-            <div class="task">
-               <div class="task-title">${task.title}</div>
-               <div class="task-description">
-                  ${description}
-               </div>
-               <div class="task-assigned-users">
-                  <button class="assigned-users-button">See Assigned Users</button>
-
-                  <div class="assigned-users-list hidden">
-                     <div class="userlist-name">User 1</div>
+                     <input class="input-username" placeholder="Write username">
+                     <button class="add-user-button">Add User</button>
                   </div>
-
-                  <input class="input-username" placeholder="Write username">
-                  <button class="add-user-button">Add User</button>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                     <div class="task-move-button-container">
+                        <button class="move-button">Move To In-Progress</button>
+                        <button class="move-button">Move To Testing</button>
+                        <button class="move-button">Move To Finished</button>
+                        <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
+                     </div>
                </div>
-               <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
-               <div class="task-move-button-container">
-                  <button class="move-button">Move To TODO</button>
-                  <button class="move-button">Move To Testing</button>
-                  <button class="move-button">Move To Finished</button>
-                  <button class="delete-button">Delete This Task</button>
-               </div>
-            </div>
-         `;
-      });
-
-      userBoard.testing.forEach(function(task) {
-         const description = task.description ? task.description : '';
-         
-         testingHTML += `
-            <div class="task">
-               <div class="task-title">${task.title}</div>
-               <div class="task-description">
-                  ${description}
-               </div>
-               <div class="task-assigned-users">
-                  <button class="assigned-users-button">See Assigned Users</button>
-
-                  <div class="assigned-users-list hidden">
-                     <div class="userlist-name">User 1</div>
+            `;
+         } else if (task.type === 'inprogress') {
+            inProgressHTML += `
+               <div class="task task-${task.id}">
+                  <div class="task-title">${task.title}</div>
+                  <div class="task-description">
+                     ${description}
                   </div>
+                  <div class="task-assigned-users">
+                     <button class="assigned-users-button">See Assigned Users</button>
 
-                  <input class="input-username" placeholder="Write username">
-                  <button class="add-user-button">Add User</button>
-               </div>
-               <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
-               <div class="task-move-button-container">
-                  <button class="move-button">Move To TODO</button>
-                  <button class="move-button">Move To In-Progress</button>
-                  <button class="move-button">Move To Finished</button>
-                  <button class="delete-button">Delete This Task</button>
-               </div>
-            </div>
-         `;
-      });
+                     <div class="assigned-users-list hidden">
+                        <div class="userlist-name"></div>
+                     </div>
 
-      userBoard.finished.forEach(function(task) {
-         const description = task.description ? task.description : '';
-         
-         finishedHTML += `
-            <div class="task">
-               <div class="task-title">${task.title}</div>
-               <div class="task-description">
-                  ${description}
-               </div>
-               <div class="task-assigned-users">
-                  <button class="assigned-users-button">See Assigned Users</button>
-
-                  <div class="assigned-users-list hidden">
-                     <div class="userlist-name">User 1</div>
+                     <input class="input-username" placeholder="Write username">
+                     <button class="add-user-button">Add User</button>
                   </div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                     <div class="task-move-button-container">
+                        <button class="move-button">Move To TODO</button>
+                        <button class="move-button">Move To Testing</button>
+                        <button class="move-button">Move To Finished</button>
+                        <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
+                     </div>
+               </div>
+            `;
+         } else if (task.type === 'testing') {
+            testingHTML += `
+               <div class="task task-${task.id}">
+                  <div class="task-title">${task.title}</div>
+                  <div class="task-description">
+                     ${description}
+                  </div>
+                  <div class="task-assigned-users">
+                     <button class="assigned-users-button">See Assigned Users</button>
 
-                  <input class="input-username" placeholder="Write username">
-                  <button class="add-user-button">Add User</button>
+                     <div class="assigned-users-list hidden">
+                        <div class="userlist-name"></div>
+                     </div>
+
+                     <input class="input-username" placeholder="Write username">
+                     <button class="add-user-button">Add User</button>
+                  </div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                     <div class="task-move-button-container">
+                        <button class="move-button">Move To TODO</button>
+                        <button class="move-button">Move To In-Progress</button>
+                        <button class="move-button">Move To Finished</button>
+                        <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
+                     </div>
                </div>
-               <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
-               <div class="task-move-button-container">
-                  <button class="move-button">Move To TODO</button>
-                  <button class="move-button">Move To In-Progress</button>
-                  <button class="move-button">Move To Testing</button>
-                  <button class="delete-button">Delete This Task</button>
+            `;
+         } else if (task.type === 'finished') {
+            finishedHTML += `
+               <div class="task task-${task.id}">
+                  <div class="task-title">${task.title}</div>
+                  <div class="task-description">
+                     ${description}
+                  </div>
+                  <div class="task-assigned-users">
+                     <button class="assigned-users-button">See Assigned Users</button>
+
+                     <div class="assigned-users-list hidden">
+                        <div class="userlist-name"></div>
+                     </div>
+
+                     <input class="input-username" placeholder="Write username">
+                     <button class="add-user-button" data-task-id=${task.id}">Add User</button>
+                  </div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                     <div class="task-move-button-container">
+                        <button class="move-button">Move To TODO</button>
+                        <button class="move-button">Move To In-Progress</button>
+                        <button class="move-button">Move To Testing</button>
+                        <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
+                     </div>
                </div>
-            </div>
-         `;
+            `;
+         }
       });
    }
 

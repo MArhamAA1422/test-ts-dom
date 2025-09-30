@@ -19,6 +19,8 @@
    color: white;
    background-color: black;
    border: none;
+   margin-right: 5px;
+   cursor: pointer;
 }
 
 .section {
