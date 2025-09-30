@@ -247,6 +247,7 @@ function addUserToTask(taskId: number) {
             if (!alreadyExist(taskId, username)) {
                task.assignedUser?.push(username);
                setData('kanbanBoard', JSON.stringify(kanbanBoard));
+               alert(`${username} is assigned.`);
                return;
             }
          } else {
