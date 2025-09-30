@@ -63,6 +63,13 @@ function main() {
             showAssignedUsers(taskId);
         });
     });
+    const addUserButtons = document.querySelectorAll('.add-user-button');
+    addUserButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const taskId = button.dataset.taskId;
+            addUserToTask(taskId);
+        });
+    });
 }
 function addTask(section) {
     document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
@@ -117,6 +124,46 @@ async function showAssignedUsers(taskId) {
     await setTimeout(function () {
         assignedUsersListElement.classList.add('hidden');
     }, 2000);
+}
+function isValidUsername(username) {
+    const users = getData('users');
+    for (let key in users) {
+        if (users[key].username === username) {
+            return true;
+        }
+    }
+    return false;
+}
+function alreadyExist(taskId, username) {
+    const kanbanBoard = getData('kanbanBoard');
+    kanbanBoard.forEach(function (task) {
+        if (task.id - taskId === 0) {
+            task.assignedUser?.forEach(function (user) {
+                if (user === username)
+                    return true;
+            });
+        }
+    });
+    return false;
+}
+function addUserToTask(taskId) {
+    const kanbanBoard = getData('kanbanBoard');
+    const username = document.querySelector(`.js-input-username-${taskId}`).value;
+    kanbanBoard.forEach(function (task) {
+        if (task.id - taskId === 0) {
+            if (isValidUsername(username)) {
+                console.log(alreadyExist(taskId, username));
+                if (!alreadyExist(taskId, username)) {
+                    task.assignedUser?.push(username);
+                    setData('kanbanBoard', JSON.stringify(kanbanBoard));
+                    return;
+                }
+            }
+            else {
+                alert('Please give valid username.');
+            }
+        }
+    });
 }
 function isAlpha(v) {
     if (v >= 'a' && v <= 'z')
@@ -216,8 +263,8 @@ function loadKanbanBoard() {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username" placeholder="Write username">
-                     <button class="add-user-button">Add User</button>
+                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -243,8 +290,8 @@ function loadKanbanBoard() {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username" placeholder="Write username">
-                     <button class="add-user-button">Add User</button>
+                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -270,8 +317,8 @@ function loadKanbanBoard() {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username" placeholder="Write username">
-                     <button class="add-user-button">Add User</button>
+                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -297,8 +344,8 @@ function loadKanbanBoard() {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username" placeholder="Write username">
-                     <button class="add-user-button" data-task-id=${task.id}">Add User</button>
+                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Add User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
