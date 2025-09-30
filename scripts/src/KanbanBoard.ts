@@ -85,6 +85,15 @@ function main() {
          }, 1500);
       });
    });
+
+   const assignedUsersButtons = (document.querySelectorAll('.js-assigned-users-button') as any);
+
+   assignedUsersButtons.forEach(function(button: any) {
+      button.addEventListener('click', function() {
+         const taskId = button.dataset.taskId;
+         showAssignedUsers(taskId);
+      });
+   });
 }
 
 function addTask(section: string) {
@@ -138,6 +147,28 @@ function moveTask(taskId: number, moveType: TaskType) {
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
    main();
+}
+
+async function showAssignedUsers(taskId: number) {
+   const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
+   let usersListHTML = '';
+
+   kanbanBoard.forEach(function(task) {
+      if (task.id - taskId === 0) {
+         task.assignedUser?.forEach(function(user) {
+            usersListHTML += `<div class="userlist-name">${user}</div>`
+         });
+      }
+   });
+
+   const assignedUsersListElement = (document.querySelector(`.js-assigned-users-list-${taskId}`) as Element);
+
+   assignedUsersListElement.classList.remove('hidden');
+   assignedUsersListElement.innerHTML = usersListHTML;
+
+   await setTimeout(function() {
+      assignedUsersListElement.classList.add('hidden');
+   }, 2000);
 }
 
 function isAlpha(v: any) {
@@ -241,9 +272,9 @@ function loadKanbanBoard() {
                      ${description}
                   </div>
                   <div class="task-assigned-users">
-                     <button class="assigned-users-button">See Assigned Users</button>
+                     <button class="assigned-users-button js-assigned-users-button" data-task-id=${task.id}>See Assigned Users</button>
 
-                     <div class="assigned-users-list hidden">
+                     <div class="assigned-users-list js-assigned-users-list-${task.id} hidden">
                         <div class="userlist-name"></div>
                      </div>
 
@@ -267,9 +298,9 @@ function loadKanbanBoard() {
                      ${description}
                   </div>
                   <div class="task-assigned-users">
-                     <button class="assigned-users-button">See Assigned Users</button>
+                     <button class="assigned-users-button js-assigned-users-button" data-task-id=${task.id}>See Assigned Users</button>
 
-                     <div class="assigned-users-list hidden">
+                     <div class="assigned-users-list js-assigned-users-list-${task.id} hidden">
                         <div class="userlist-name"></div>
                      </div>
 
@@ -293,9 +324,9 @@ function loadKanbanBoard() {
                      ${description}
                   </div>
                   <div class="task-assigned-users">
-                     <button class="assigned-users-button">See Assigned Users</button>
+                     <button class="assigned-users-button js-assigned-users-button" data-task-id=${task.id}>See Assigned Users</button>
 
-                     <div class="assigned-users-list hidden">
+                     <div class="assigned-users-list js-assigned-users-list-${task.id} hidden">
                         <div class="userlist-name"></div>
                      </div>
 
@@ -319,9 +350,9 @@ function loadKanbanBoard() {
                      ${description}
                   </div>
                   <div class="task-assigned-users">
-                     <button class="assigned-users-button">See Assigned Users</button>
+                     <button class="assigned-users-button js-assigned-users-button" data-task-id=${task.id}>See Assigned Users</button>
 
-                     <div class="assigned-users-list hidden">
+                     <div class="assigned-users-list js-assigned-users-list-${task.id} hidden">
                         <div class="userlist-name"></div>
                      </div>
 
