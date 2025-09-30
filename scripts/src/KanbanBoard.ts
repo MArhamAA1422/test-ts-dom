@@ -145,10 +145,11 @@ function addTask(section: string) {
 
          if (!valid) {
             alert('Please write valid task title');
+            (document.querySelector(`.new-task-info-${section}`) as Element).classList.add('hidden');
             return;
          }
 
-         (document.querySelector('.js-add-task-tooltip') as Element).classList.remove('hidden');
+         (document.querySelector(`.js-add-task-tooltip-${section}`) as Element).classList.remove('hidden');
 
          setTimeout(async function() {
             const handleAsync = function() {
@@ -158,7 +159,7 @@ function addTask(section: string) {
             }
 
             await handleAsync();
-            (document.querySelector('.js-add-task-tooltip') as Element).classList.add('hidden');
+            (document.querySelector(`.js-add-task-tooltip-${section}`) as Element).classList.add('hidden');
          }, 1500);
       });
 }

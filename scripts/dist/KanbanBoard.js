@@ -101,16 +101,17 @@ function addTask(section) {
         }
         if (!valid) {
             alert('Please write valid task title');
+            document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
             return;
         }
-        document.querySelector('.js-add-task-tooltip').classList.remove('hidden');
+        document.querySelector(`.js-add-task-tooltip-${section}`).classList.remove('hidden');
         setTimeout(async function () {
             const handleAsync = function () {
                 document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
                 addTaskToUserBoard(section, taskTitle, taskDescription);
             };
             await handleAsync();
-            document.querySelector('.js-add-task-tooltip').classList.add('hidden');
+            document.querySelector(`.js-add-task-tooltip-${section}`).classList.add('hidden');
         }, 1500);
     });
 }
