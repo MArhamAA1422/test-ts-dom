@@ -11,7 +11,7 @@ function currentUser() {
 }
 function main() {
     const kanbanBoard = getData('kanbanBoard');
-    console.log(kanbanBoard, typeof kanbanBoard);
+    // console.log(kanbanBoard, typeof kanbanBoard);
     loadKanbanBoard();
     document.querySelector('.js-todo-add').addEventListener('click', function () {
         addTask('todo');
@@ -37,8 +37,10 @@ function main() {
         button.addEventListener('click', function () {
             const taskId = button.dataset.taskId;
             const moveType = button.dataset.moveType;
-            console.log(taskId, moveType);
-            moveTask(taskId, moveType);
+            // console.log(taskId, moveType);
+            setTimeout(async function () {
+                await moveTask(taskId, moveType);
+            }, 1500);
         });
     });
 }
@@ -46,7 +48,7 @@ function addTask(section) {
     document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
     document.querySelector(`.add-task-button-${section}`)
         .addEventListener('click', function () {
-        console.log('clicked');
+        // console.log('clicked');
         const taskTitle = document.querySelector(`.js-${section}-title`).value;
         const taskDescription = document.querySelector(`.js-${section}-description`).value;
         // console.log(taskTitle, taskDescription);
@@ -61,21 +63,21 @@ function deleteTask(taskId) {
             return false;
         return true;
     });
-    console.log(kanbanBoard);
+    // console.log(kanbanBoard);
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
     main();
 }
 function moveTask(taskId, moveType) {
     let kanbanBoard = getData('kanbanBoard');
     kanbanBoard = kanbanBoard.map(function (task) {
-        console.log(task);
+        // console.log(task);
         if (task.id - taskId === 0) {
             task.type = moveType;
         }
-        console.log(task);
+        // console.log(task);
         return task;
     });
-    console.log(kanbanBoard);
+    // console.log(kanbanBoard);
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
     main();
 }

@@ -27,7 +27,7 @@ function currentUser() {
 function main() {
    const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
-   console.log(kanbanBoard, typeof kanbanBoard);
+   // console.log(kanbanBoard, typeof kanbanBoard);
 
    loadKanbanBoard();
 
@@ -62,8 +62,10 @@ function main() {
       button.addEventListener('click', function() {
          const taskId = button.dataset.taskId;
          const moveType = button.dataset.moveType;
-         console.log(taskId, moveType);
-         moveTask(taskId, moveType);
+         // console.log(taskId, moveType);
+         setTimeout(async function() {
+            await moveTask(taskId, moveType);
+         }, 1500);
       });
    });
 }
@@ -73,7 +75,7 @@ function addTask(section: string) {
 
    (document.querySelector(`.add-task-button-${section}`) as Element)
       .addEventListener('click', function() {
-         console.log('clicked');
+         // console.log('clicked');
 
          const taskTitle = (document.querySelector(`.js-${section}-title`) as HTMLInputElement).value;
 
@@ -95,7 +97,7 @@ function deleteTask(taskId: number) {
       return true;
    });
 
-   console.log(kanbanBoard);
+   // console.log(kanbanBoard);
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
@@ -106,15 +108,15 @@ function moveTask(taskId: number, moveType: TaskType) {
    let kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
    kanbanBoard = kanbanBoard.map(function(task) {
-      console.log(task);
+      // console.log(task);
       if (task.id - taskId === 0) {
          task.type = moveType;
       }
-      console.log(task);
+      // console.log(task);
       return task;
    });
 
-   console.log(kanbanBoard);
+   // console.log(kanbanBoard);
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
