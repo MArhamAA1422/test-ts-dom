@@ -32,6 +32,15 @@ function main() {
             deleteTask(taskId);
         });
     });
+    const moveButtons = document.querySelectorAll('.move-button');
+    moveButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const taskId = button.dataset.taskId;
+            const moveType = button.dataset.moveType;
+            console.log(taskId, moveType);
+            moveTask(taskId, moveType);
+        });
+    });
 }
 function addTask(section) {
     document.querySelector(`.new-task-info-${section}`).classList.remove('hidden');
@@ -51,6 +60,20 @@ function deleteTask(taskId) {
         if (task.id - taskId === 0)
             return false;
         return true;
+    });
+    console.log(kanbanBoard);
+    setData('kanbanBoard', JSON.stringify(kanbanBoard));
+    main();
+}
+function moveTask(taskId, moveType) {
+    let kanbanBoard = getData('kanbanBoard');
+    kanbanBoard = kanbanBoard.map(function (task) {
+        console.log(task);
+        if (task.id - taskId === 0) {
+            task.type = moveType;
+        }
+        console.log(task);
+        return task;
     });
     console.log(kanbanBoard);
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
@@ -154,9 +177,9 @@ function loadKanbanBoard() {
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
                      <div class="task-move-button-container">
-                        <button class="move-button">Move To In-Progress</button>
-                        <button class="move-button">Move To Testing</button>
-                        <button class="move-button">Move To Finished</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="testing">Move To Testing</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="finished">Move To Finished</button>
                         <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
                      </div>
                </div>
@@ -181,9 +204,9 @@ function loadKanbanBoard() {
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
                      <div class="task-move-button-container">
-                        <button class="move-button">Move To TODO</button>
-                        <button class="move-button">Move To Testing</button>
-                        <button class="move-button">Move To Finished</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="testing">Move To Testing</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="finished">Move To Finished</button>
                         <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
                      </div>
                </div>
@@ -208,9 +231,9 @@ function loadKanbanBoard() {
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
                      <div class="task-move-button-container">
-                        <button class="move-button">Move To TODO</button>
-                        <button class="move-button">Move To In-Progress</button>
-                        <button class="move-button">Move To Finished</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="finished">Move To Finished</button>
                         <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
                      </div>
                </div>
@@ -235,9 +258,9 @@ function loadKanbanBoard() {
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
                      <div class="task-move-button-container">
-                        <button class="move-button">Move To TODO</button>
-                        <button class="move-button">Move To In-Progress</button>
-                        <button class="move-button">Move To Testing</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>
+                        <button class="move-button" data-task-id=${task.id} data-move-type="testing">Move To Testing</button>
                         <button class="delete-button" data-task-id=${task.id}>Delete This Task</button>
                      </div>
                </div>
