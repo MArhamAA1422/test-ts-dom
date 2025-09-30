@@ -34,7 +34,10 @@ function checkValidUser() {
 
          setData('currUser', JSON.stringify(currUser));
 
-         loadHomePage();
+         setTimeout(async function() {
+            await loadHomePage();
+         }, 1000);
+
          return;
       }
    }

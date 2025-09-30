@@ -25,7 +25,9 @@ function checkValidUser() {
                 username: users[user].username
             };
             setData('currUser', JSON.stringify(currUser));
-            loadHomePage();
+            setTimeout(async function () {
+                await loadHomePage();
+            }, 1000);
             return;
         }
     }
