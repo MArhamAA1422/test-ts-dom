@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 init();
+function reloadPage() {
+    setTimeout(async function () {
+        await (window.location.href = '../pages/KanbanBoard.html');
+    }, 10);
+}
 function init() {
     const kanbanBoard = getData('kanbanBoard');
     main(kanbanBoard);
@@ -88,91 +93,25 @@ function addTask(section) {
         const taskTitle = document.querySelector(`.js-${section}-title`).value;
         const taskDescription = document.querySelector(`.js-${section}-description`).value;
         // console.log(taskTitle, taskDescription);
-        document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
-        addTaskToUserBoard(section, taskTitle, taskDescription);
-    });
-}
-function deleteTask(taskId) {
-    let kanbanBoard = getData('kanbanBoard');
-    kanbanBoard = kanbanBoard.filter(function (task) {
-        if (task.id - taskId === 0)
-            return false;
-        return true;
-    });
-    // console.log(kanbanBoard);
-    setData('kanbanBoard', JSON.stringify(kanbanBoard));
-    init();
-}
-function moveTask(taskId, moveType) {
-    let kanbanBoard = getData('kanbanBoard');
-    kanbanBoard = kanbanBoard.map(function (task) {
-        // console.log(task);
-        if (task.id - taskId === 0) {
-            task.type = moveType;
-        }
-        // console.log(task);
-        return task;
-    });
-    // console.log(kanbanBoard);
-    setData('kanbanBoard', JSON.stringify(kanbanBoard));
-    init();
-}
-async function showAssignedUsers(taskId) {
-    const kanbanBoard = getData('kanbanBoard');
-    let usersListHTML = '';
-    kanbanBoard.forEach(function (task) {
-        if (task.id - taskId === 0) {
-            task.assignedUser?.forEach(function (user) {
-                usersListHTML += `<div class="userlist-name">${user}</div>`;
-            });
-        }
-    });
-    const assignedUsersListElement = document.querySelector(`.js-assigned-users-list-${taskId}`);
-    assignedUsersListElement.classList.remove('hidden');
-    assignedUsersListElement.innerHTML = usersListHTML;
-    await setTimeout(function () {
-        assignedUsersListElement.classList.add('hidden');
-    }, 2000);
-}
-function isValidUsername(username) {
-    const users = getData('users');
-    for (let key in users) {
-        if (users[key].username === username) {
-            return true;
-        }
-    }
-    return false;
-}
-function alreadyExist(taskId, username) {
-    const kanbanBoard = getData('kanbanBoard');
-    let found = false;
-    kanbanBoard.forEach(function (task) {
-        if (task.id - taskId === 0) {
-            task.assignedUser?.forEach(function (user) {
-                if (user === username)
-                    found = true;
-            });
-        }
-    });
-    return found;
-}
-function addUserToTask(taskId) {
-    const kanbanBoard = getData('kanbanBoard');
-    const username = document.querySelector(`.js-input-username-${taskId}`).value;
-    kanbanBoard.forEach(function (task) {
-        if (task.id - taskId === 0) {
-            if (isValidUsername(username)) {
-                // console.log(alreadyExist(taskId, username));
-                if (!alreadyExist(taskId, username)) {
-                    task.assignedUser?.push(username);
-                    setData('kanbanBoard', JSON.stringify(kanbanBoard));
-                    return;
-                }
-            }
-            else {
-                alert('Please give valid username.');
+        let valid = false;
+        for (let c of taskTitle) {
+            if (isAlpha(c)) {
+                valid = true;
             }
         }
+        if (!valid) {
+            alert('Please write valid task title');
+            return;
+        }
+        document.querySelector('.js-add-task-tooltip').classList.remove('hidden');
+        setTimeout(async function () {
+            const handleAsync = function () {
+                document.querySelector(`.new-task-info-${section}`).classList.add('hidden');
+                addTaskToUserBoard(section, taskTitle, taskDescription);
+            };
+            await handleAsync();
+            document.querySelector('.js-add-task-tooltip').classList.add('hidden');
+        }, 1500);
     });
 }
 function isAlpha(v) {
@@ -183,17 +122,7 @@ function isAlpha(v) {
     return false;
 }
 function addTaskToUserBoard(section, title, description) {
-    let valid = false;
     const currUser = currentUser();
-    for (let c of title) {
-        if (isAlpha(c)) {
-            valid = true;
-        }
-    }
-    if (!valid) {
-        alert('Please write valid task title');
-        return;
-    }
     let kanbanBoard = getData('kanbanBoard');
     if (!kanbanBoard)
         kanbanBoard = [];
@@ -248,9 +177,92 @@ function addTaskToUserBoard(section, title, description) {
         // console.log('done');
         addTask('todo');
     });
-    init();
+    reloadPage();
 }
 ;
+function addUserToTask(taskId) {
+    const kanbanBoard = getData('kanbanBoard');
+    const username = document.querySelector(`.js-input-username-${taskId}`).value;
+    kanbanBoard.forEach(function (task) {
+        if (task.id - taskId === 0) {
+            if (isValidUsername(username)) {
+                // console.log(alreadyExist(taskId, username));
+                if (!alreadyExist(taskId, username)) {
+                    task.assignedUser?.push(username);
+                    setData('kanbanBoard', JSON.stringify(kanbanBoard));
+                    return;
+                }
+            }
+            else {
+                alert('Please give valid username.');
+            }
+        }
+    });
+}
+function deleteTask(taskId) {
+    let kanbanBoard = getData('kanbanBoard');
+    kanbanBoard = kanbanBoard.filter(function (task) {
+        if (task.id - taskId === 0)
+            return false;
+        return true;
+    });
+    // console.log(kanbanBoard);
+    setData('kanbanBoard', JSON.stringify(kanbanBoard));
+    reloadPage();
+}
+function moveTask(taskId, moveType) {
+    let kanbanBoard = getData('kanbanBoard');
+    kanbanBoard = kanbanBoard.map(function (task) {
+        // console.log(task);
+        if (task.id - taskId === 0) {
+            task.type = moveType;
+        }
+        // console.log(task);
+        return task;
+    });
+    // console.log(kanbanBoard);
+    setData('kanbanBoard', JSON.stringify(kanbanBoard));
+    reloadPage();
+}
+async function showAssignedUsers(taskId) {
+    const kanbanBoard = getData('kanbanBoard');
+    let usersListHTML = '';
+    kanbanBoard.forEach(function (task) {
+        if (task.id - taskId === 0) {
+            task.assignedUser?.forEach(function (user) {
+                usersListHTML += `<div class="userlist-name">${user}</div>`;
+            });
+        }
+    });
+    const assignedUsersListElement = document.querySelector(`.js-assigned-users-list-${taskId}`);
+    assignedUsersListElement.classList.remove('hidden');
+    assignedUsersListElement.innerHTML = usersListHTML;
+    await setTimeout(function () {
+        assignedUsersListElement.classList.add('hidden');
+    }, 2000);
+}
+function isValidUsername(username) {
+    const users = getData('users');
+    for (let key in users) {
+        if (users[key].username === username) {
+            return true;
+        }
+    }
+    return false;
+}
+function alreadyExist(taskId, username) {
+    const kanbanBoard = getData('kanbanBoard');
+    let found = false;
+    kanbanBoard.forEach(function (task) {
+        if (task.id - taskId === 0) {
+            task.assignedUser?.forEach(function (user) {
+                if (user === username)
+                    found = true;
+            });
+        }
+    });
+    return found;
+}
 function setData(key, data) {
     localStorage.setItem(key, data);
 }

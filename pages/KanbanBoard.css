@@ -85,6 +85,16 @@
    cursor: pointer;
 }
 
+.add-task-tooltip {
+   height: 20px;
+   background-color: aquamarine;
+   padding: 8px;
+   font-size: 16px;
+   color: green;
+   font-weight: bold;
+   border-radius: 10px;
+}
+
 .task-container {
    flex: 1;
    display: flex;
@@ -142,6 +152,7 @@
 
 .select-user {
    margin-top: 20px;
+   font-size: 16px;
 }
 
 .assigned-users-list {

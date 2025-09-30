@@ -3,5 +3,5 @@
 
 ## KanbanBoard
 - querySelectorAll: any
-- multiple add sometimes
+- multiple eventListeners load
 - 'add user' => username list option
