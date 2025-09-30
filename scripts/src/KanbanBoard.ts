@@ -24,12 +24,28 @@ function currentUser() {
    return getData('currUser');
 }
 
+function loadLoginPage() {
+   window.location.href = "../pages/LoginPage.html";
+}
+
 function main() {
+   const currUser = currentUser();
+   if (currUser === null) {
+      loadLoginPage();
+      return;
+   }
+
    const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
 
    // console.log(kanbanBoard, typeof kanbanBoard);
 
    loadKanbanBoard();
+
+   (document.querySelector('.js-log-out') as Element)
+      .addEventListener('click', function() {
+         localStorage.removeItem('currUser');
+         loadLoginPage();
+      });
 
    (document.querySelector('.js-todo-add') as Element).addEventListener('click', function() {
       addTask('todo');
@@ -214,7 +230,7 @@ function loadKanbanBoard() {
          if (task.type === 'todo') {
             todoHTML += `
                <div class="task task-${task.id}">
-                  <div class="task-title">${task.title}</div>
+                  <div class="task-title">Title: ${task.title}</div>
                   <div class="task-description">
                      ${description}
                   </div>
@@ -240,7 +256,7 @@ function loadKanbanBoard() {
          } else if (task.type === 'inprogress') {
             inProgressHTML += `
                <div class="task task-${task.id}">
-                  <div class="task-title">${task.title}</div>
+                  <div class="task-title">Title: ${task.title}</div>
                   <div class="task-description">
                      ${description}
                   </div>
@@ -266,7 +282,7 @@ function loadKanbanBoard() {
          } else if (task.type === 'testing') {
             testingHTML += `
                <div class="task task-${task.id}">
-                  <div class="task-title">${task.title}</div>
+                  <div class="task-title">Title: ${task.title}</div>
                   <div class="task-description">
                      ${description}
                   </div>
@@ -292,7 +308,7 @@ function loadKanbanBoard() {
          } else if (task.type === 'finished') {
             finishedHTML += `
                <div class="task task-${task.id}">
-                  <div class="task-title">${task.title}</div>
+                  <div class="task-title">Title: ${task.title}</div>
                   <div class="task-description">
                      ${description}
                   </div>
