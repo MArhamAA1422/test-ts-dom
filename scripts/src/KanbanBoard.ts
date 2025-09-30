@@ -1,4 +1,9 @@
-main();
+init();
+
+function init() {
+   const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
+   main(kanbanBoard);
+}
 
 type TaskType = 'todo' | 'inprogress' | 'testing' | 'finished';
 
@@ -29,7 +34,7 @@ function loadLoginPage() {
    window.location.href = "../pages/LoginPage.html";
 }
 
-function main() {
+function main(kanbanBoard: KanbanBoardType) {
    const currUser = currentUser();
    if (currUser === null) {
       loadLoginPage();
@@ -38,11 +43,9 @@ function main() {
 
    (document.querySelector('.js-display-username') as Element).innerHTML = `User: <span class="username">${currUser.username}</span>`;
 
-   const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
-
    // console.log(kanbanBoard, typeof kanbanBoard);
 
-   loadKanbanBoard(getData('kanbanBoard'));
+   loadKanbanBoard(kanbanBoard);
 
    (document.querySelector('.js-log-out') as Element)
       .addEventListener('click', function() {
@@ -145,7 +148,7 @@ function deleteTask(taskId: number) {
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
-   main();
+   init();
 }
 
 function moveTask(taskId: number, moveType: TaskType) {
@@ -164,7 +167,7 @@ function moveTask(taskId: number, moveType: TaskType) {
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
-   main();
+   init();
 }
 
 async function showAssignedUsers(taskId: number) {
@@ -306,7 +309,13 @@ function addTaskToUserBoard(section: string, title: string, description: string)
    }
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
-   main();
+
+   (document.querySelector(`.js-${section}-add`) as Element).removeEventListener('click', function() {
+      console.log('done');
+      addTask('todo');
+   });
+
+   init();
 };
 
 function setData(key: string, data: string) {
@@ -330,7 +339,7 @@ function loadKanbanBoardByUsername(username: string) {
       alert('Loading items by search');
    }
 
-   loadKanbanBoard(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
+   main(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
 }
 
 function loadKanbanBoard(kanbanBoard: KanbanBoardType) {

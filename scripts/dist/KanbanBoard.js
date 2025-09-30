@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-main();
+init();
+function init() {
+    const kanbanBoard = getData('kanbanBoard');
+    main(kanbanBoard);
+}
 function getData(key) {
     const jsonValue = localStorage.getItem(key);
     const value = jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -12,16 +16,15 @@ function currentUser() {
 function loadLoginPage() {
     window.location.href = "../pages/LoginPage.html";
 }
-function main() {
+function main(kanbanBoard) {
     const currUser = currentUser();
     if (currUser === null) {
         loadLoginPage();
         return;
     }
     document.querySelector('.js-display-username').innerHTML = `User: <span class="username">${currUser.username}</span>`;
-    const kanbanBoard = getData('kanbanBoard');
     // console.log(kanbanBoard, typeof kanbanBoard);
-    loadKanbanBoard(getData('kanbanBoard'));
+    loadKanbanBoard(kanbanBoard);
     document.querySelector('.js-log-out')
         .addEventListener('click', function () {
         localStorage.removeItem('currUser');
@@ -98,7 +101,7 @@ function deleteTask(taskId) {
     });
     // console.log(kanbanBoard);
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
-    main();
+    init();
 }
 function moveTask(taskId, moveType) {
     let kanbanBoard = getData('kanbanBoard');
@@ -112,7 +115,7 @@ function moveTask(taskId, moveType) {
     });
     // console.log(kanbanBoard);
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
-    main();
+    init();
 }
 async function showAssignedUsers(taskId) {
     const kanbanBoard = getData('kanbanBoard');
@@ -240,7 +243,11 @@ function addTaskToUserBoard(section, title, description) {
             });
     }
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
-    main();
+    document.querySelector(`.js-${section}-add`).removeEventListener('click', function () {
+        console.log('done');
+        addTask('todo');
+    });
+    init();
 }
 ;
 function setData(key, data) {
@@ -260,7 +267,7 @@ function loadKanbanBoardByUsername(username) {
     if (newKanbanBoard.length) {
         alert('Loading items by search');
     }
-    loadKanbanBoard(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
+    main(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
 }
 function loadKanbanBoard(kanbanBoard) {
     let todoHTML = '';
