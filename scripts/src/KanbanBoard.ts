@@ -42,12 +42,19 @@ function main() {
 
    // console.log(kanbanBoard, typeof kanbanBoard);
 
-   loadKanbanBoard();
+   loadKanbanBoard(getData('kanbanBoard'));
 
    (document.querySelector('.js-log-out') as Element)
       .addEventListener('click', function() {
          localStorage.removeItem('currUser');
          loadLoginPage();
+      });
+
+   (document.querySelector('.js-search-button') as Element)
+      .addEventListener('click', function() {
+         const searchInput = (document.querySelector('.js-search-input') as HTMLInputElement).value;
+         
+         loadKanbanBoardByUsername(searchInput);
       });
 
    (document.querySelector('.js-todo-add') as Element).addEventListener('click', function() {
@@ -306,9 +313,27 @@ function setData(key: string, data: string) {
    localStorage.setItem(key, data);
 }
 
-function loadKanbanBoard() {
+function loadKanbanBoardByUsername(username: string) {
    const kanbanBoard: KanbanBoardType = getData('kanbanBoard');
+   
+   const newKanbanBoard = kanbanBoard.filter(function(task) {
+      let found = false;
+      task.assignedUser?.forEach(function(user) {
+         if (user === username) {
+            found = true;
+         }
+      });
+      return found;
+   });
 
+   if (newKanbanBoard.length) {
+      alert('Loading items by search');
+   }
+
+   loadKanbanBoard(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
+}
+
+function loadKanbanBoard(kanbanBoard: KanbanBoardType) {
    let todoHTML: string = '';
    let inProgressHTML: string = '';
    let testingHTML: string = '';
@@ -333,7 +358,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -359,7 +384,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -385,7 +410,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -411,7 +436,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">

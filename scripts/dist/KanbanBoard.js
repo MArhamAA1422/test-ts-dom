@@ -21,11 +21,16 @@ function main() {
     document.querySelector('.js-display-username').innerHTML = `User: <span class="username">${currUser.username}</span>`;
     const kanbanBoard = getData('kanbanBoard');
     // console.log(kanbanBoard, typeof kanbanBoard);
-    loadKanbanBoard();
+    loadKanbanBoard(getData('kanbanBoard'));
     document.querySelector('.js-log-out')
         .addEventListener('click', function () {
         localStorage.removeItem('currUser');
         loadLoginPage();
+    });
+    document.querySelector('.js-search-button')
+        .addEventListener('click', function () {
+        const searchInput = document.querySelector('.js-search-input').value;
+        loadKanbanBoardByUsername(searchInput);
     });
     document.querySelector('.js-todo-add').addEventListener('click', function () {
         addTask('todo');
@@ -241,8 +246,23 @@ function addTaskToUserBoard(section, title, description) {
 function setData(key, data) {
     localStorage.setItem(key, data);
 }
-function loadKanbanBoard() {
+function loadKanbanBoardByUsername(username) {
     const kanbanBoard = getData('kanbanBoard');
+    const newKanbanBoard = kanbanBoard.filter(function (task) {
+        let found = false;
+        task.assignedUser?.forEach(function (user) {
+            if (user === username) {
+                found = true;
+            }
+        });
+        return found;
+    });
+    if (newKanbanBoard.length) {
+        alert('Loading items by search');
+    }
+    loadKanbanBoard(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
+}
+function loadKanbanBoard(kanbanBoard) {
     let todoHTML = '';
     let inProgressHTML = '';
     let testingHTML = '';
@@ -265,7 +285,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -292,7 +312,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -319,7 +339,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
@@ -346,7 +366,7 @@ function loadKanbanBoard() {
                      </div>
 
                      <input class="input-username js-input-username-${task.id}" placeholder="Write username">
-                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Add User</button>
+                     <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
