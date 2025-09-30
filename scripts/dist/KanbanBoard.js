@@ -21,7 +21,7 @@ function currentUser() {
 function loadLoginPage() {
     window.location.href = "../pages/LoginPage.html";
 }
-function main(kanbanBoard) {
+function main(kanbanBoard, fromSearch = false) {
     const currUser = currentUser();
     if (currUser === null) {
         loadLoginPage();
@@ -38,7 +38,12 @@ function main(kanbanBoard) {
     document.querySelector('.js-search-button')
         .addEventListener('click', function (event) {
         const searchInput = document.querySelector('.js-search-input').value;
+        // if (fromSearch) {
+        //    reloadPage();
+        //    loadKanbanBoardByUsername(searchInput);
+        // } else {
         loadKanbanBoardByUsername(searchInput);
+        // }
     });
     document.querySelector('.js-todo-add').addEventListener('click', function () {
         addTask('todo');
@@ -281,10 +286,11 @@ function loadKanbanBoardByUsername(username) {
         return found;
     });
     if (newKanbanBoard.length) {
-        alert('Loading items by search');
-        main(newKanbanBoard);
+        alert(`Loading tasks assigned for ${username}`);
+        main(newKanbanBoard, true);
     }
     else {
+        alert(`No such user.`);
         reloadPage();
     }
 }
