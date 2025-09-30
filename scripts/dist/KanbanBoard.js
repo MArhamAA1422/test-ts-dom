@@ -103,6 +103,7 @@ function isAlpha(v) {
 }
 function addTaskToUserBoard(section, title, description) {
     let valid = false;
+    const currUser = currentUser();
     for (let c of title) {
         if (isAlpha(c)) {
             valid = true;
@@ -126,6 +127,7 @@ function addTaskToUserBoard(section, title, description) {
                 id,
                 title,
                 type: 'todo',
+                createdBy: currUser.username,
                 description,
                 assignedUser: [],
             });
@@ -135,6 +137,7 @@ function addTaskToUserBoard(section, title, description) {
                 id,
                 title,
                 type: 'inprogress',
+                createdBy: currUser.username,
                 description,
                 assignedUser: [],
             });
@@ -144,6 +147,7 @@ function addTaskToUserBoard(section, title, description) {
                 id,
                 title,
                 type: 'testing',
+                createdBy: currUser.username,
                 description,
                 assignedUser: [],
             });
@@ -153,6 +157,7 @@ function addTaskToUserBoard(section, title, description) {
                 id,
                 title,
                 type: 'finished',
+                createdBy: currUser.username,
                 description,
                 assignedUser: [],
             });
@@ -190,7 +195,7 @@ function loadKanbanBoard() {
                      <input class="input-username" placeholder="Write username">
                      <button class="add-user-button">Add User</button>
                   </div>
-                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
                         <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>
                         <button class="move-button" data-task-id=${task.id} data-move-type="testing">Move To Testing</button>
@@ -217,7 +222,7 @@ function loadKanbanBoard() {
                      <input class="input-username" placeholder="Write username">
                      <button class="add-user-button">Add User</button>
                   </div>
-                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
                         <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
                         <button class="move-button" data-task-id=${task.id} data-move-type="testing">Move To Testing</button>
@@ -244,7 +249,7 @@ function loadKanbanBoard() {
                      <input class="input-username" placeholder="Write username">
                      <button class="add-user-button">Add User</button>
                   </div>
-                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
                         <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
                         <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>
@@ -271,7 +276,7 @@ function loadKanbanBoard() {
                      <input class="input-username" placeholder="Write username">
                      <button class="add-user-button" data-task-id=${task.id}">Add User</button>
                   </div>
-                  <div class="task-created-by">Created By <span style="font-weight: bold;">Test</span></div>
+                  <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
                      <div class="task-move-button-container">
                         <button class="move-button" data-task-id=${task.id} data-move-type="todo">Move To TODO</button>
                         <button class="move-button" data-task-id=${task.id} data-move-type="inprogress">Move To In-Progress</button>

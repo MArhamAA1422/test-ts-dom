@@ -22,7 +22,7 @@ function checkValidUser() {
         if (users[user].email === email && users[user].password === password) {
             const currUser = {
                 id: user,
-                name: users[user].name
+                username: users[user].username
             };
             setData('currUser', JSON.stringify(currUser));
             loadHomePage();

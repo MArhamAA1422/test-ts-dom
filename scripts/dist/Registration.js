@@ -5,18 +5,33 @@ function loadLoginPage() {
     window.location.href = "../pages/LoginPage.html";
 }
 function fetchInfo() {
+    const users = getData('users');
+    let valid = true;
     const nameElement = document.querySelector('.js-name');
     const name = nameElement.value;
     const emailElement = document.querySelector('.js-email');
     const email = emailElement.value;
     const passwordElement = document.querySelector('.js-password');
     const password = passwordElement.value;
-    if (name && email && password) {
+    if (users) {
+        for (let key in users) {
+            if (users[key].email === email) {
+                valid = false;
+            }
+            if (users[key].username === name) {
+                valid = false;
+            }
+        }
+    }
+    if (name && email && password && valid) {
         saveToDB(name, email, password);
         loadLoginPage();
     }
-    else {
+    else if (valid) {
         alert('Provide correct information.');
+    }
+    else if (!valid) {
+        alert('This username or email already exists.');
     }
 }
 function main() {
@@ -70,10 +85,8 @@ function checkValidity(input, checkFunction) {
 function nameCheck(curr) {
     let valid = true;
     for (let c of curr) {
-        if (c < 'A' || c > 'z') {
-            if (c !== ' ') {
-                valid = false;
-            }
+        if (!isAlpha(c) && !isNumber(c)) {
+            valid = false;
         }
     }
     return valid;
