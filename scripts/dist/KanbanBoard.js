@@ -145,15 +145,16 @@ function isValidUsername(username) {
 }
 function alreadyExist(taskId, username) {
     const kanbanBoard = getData('kanbanBoard');
+    let found = false;
     kanbanBoard.forEach(function (task) {
         if (task.id - taskId === 0) {
             task.assignedUser?.forEach(function (user) {
                 if (user === username)
-                    return true;
+                    found = true;
             });
         }
     });
-    return false;
+    return found;
 }
 function addUserToTask(taskId) {
     const kanbanBoard = getData('kanbanBoard');
@@ -161,7 +162,7 @@ function addUserToTask(taskId) {
     kanbanBoard.forEach(function (task) {
         if (task.id - taskId === 0) {
             if (isValidUsername(username)) {
-                console.log(alreadyExist(taskId, username));
+                // console.log(alreadyExist(taskId, username));
                 if (!alreadyExist(taskId, username)) {
                     task.assignedUser?.push(username);
                     setData('kanbanBoard', JSON.stringify(kanbanBoard));
@@ -244,7 +245,7 @@ function addTaskToUserBoard(section, title, description) {
     }
     setData('kanbanBoard', JSON.stringify(kanbanBoard));
     document.querySelector(`.js-${section}-add`).removeEventListener('click', function () {
-        console.log('done');
+        // console.log('done');
         addTask('todo');
     });
     init();
@@ -269,12 +270,25 @@ function loadKanbanBoardByUsername(username) {
     }
     main(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
 }
+function userListToAssign() {
+    const users = getData('users');
+    let userListToAssignHTML = '';
+    for (let key in users) {
+        userListToAssignHTML += `
+         <option value=${users[key].username}>${users[key].username}</option>
+      `;
+    }
+    // console.log(userListToAssignHTML);
+    return userListToAssignHTML;
+}
+;
 function loadKanbanBoard(kanbanBoard) {
     let todoHTML = '';
     let inProgressHTML = '';
     let testingHTML = '';
     let finishedHTML = '';
     if (kanbanBoard) {
+        const userListToAssignHTML = userListToAssign();
         kanbanBoard.forEach(function (task) {
             const description = task.description ? task.description : '';
             if (task.type === 'todo') {
@@ -291,7 +305,10 @@ function loadKanbanBoard(kanbanBoard) {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <select name="Users" class="select-user js-input-username-${task.id}">
+                        ${userListToAssignHTML}
+                     </select>
+
                      <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
@@ -318,7 +335,10 @@ function loadKanbanBoard(kanbanBoard) {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <select name="Users" class="select-user js-input-username-${task.id}">
+                        ${userListToAssignHTML}
+                     </select>
+
                      <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
@@ -345,7 +365,10 @@ function loadKanbanBoard(kanbanBoard) {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <select name="Users" class="select-user js-input-username-${task.id}">
+                        ${userListToAssignHTML}
+                     </select>
+
                      <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id}>Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>
@@ -372,7 +395,10 @@ function loadKanbanBoard(kanbanBoard) {
                         <div class="userlist-name"></div>
                      </div>
 
-                     <input class="input-username js-input-username-${task.id}" placeholder="Write username">
+                     <select name="Users" class="select-user js-input-username-${task.id}">
+                        ${userListToAssignHTML}
+                     </select>
+
                      <button class="add-user-button js-add-user-button-${task.id}" data-task-id=${task.id} data-task-id=${task.id}">Assign User</button>
                   </div>
                   <div class="task-created-by">Created By <span style="font-weight: bold;">${task.createdBy}</span></div>

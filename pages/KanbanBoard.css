@@ -104,7 +104,6 @@
 
 .task-title {
    font-size: 20px;
-   text-decoration: underline;
 }
 
 .task-description {
@@ -139,6 +138,10 @@
 .assigned-users-button, .add-user-button {
    background-color: black;
    color: white
+}
+
+.select-user {
+   margin-top: 20px;
 }
 
 .assigned-users-list {
