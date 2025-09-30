@@ -60,7 +60,7 @@ function main(kanbanBoard: KanbanBoardType) {
       });
 
    (document.querySelector('.js-search-button') as Element)
-      .addEventListener('click', function() {
+      .addEventListener('click', function(event) {
          const searchInput = (document.querySelector('.js-search-input') as HTMLInputElement).value;
          
          loadKanbanBoardByUsername(searchInput);
@@ -160,6 +160,7 @@ function addTask(section: string) {
 
             await handleAsync();
             (document.querySelector(`.js-add-task-tooltip-${section}`) as Element).classList.add('hidden');
+            alert('Task added successfully.');
          }, 1500);
       });
 }
@@ -227,10 +228,10 @@ function addTaskToUserBoard(section: string, title: string, description: string)
 
    setData('kanbanBoard', JSON.stringify(kanbanBoard));
 
-   (document.querySelector(`.js-${section}-add`) as Element).removeEventListener('click', function() {
-      // console.log('done');
-      addTask('todo');
-   });
+   // (document.querySelector(`.js-${section}-add`) as Element).removeEventListener('click', function() {
+   //    // console.log('done');
+   //    addTask('todo');
+   // });
 
    reloadPage();
 };
@@ -355,9 +356,10 @@ function loadKanbanBoardByUsername(username: string) {
 
    if (newKanbanBoard.length) {
       alert('Loading items by search');
+      main(newKanbanBoard);
+   } else {
+      reloadPage();
    }
-
-   main(newKanbanBoard.length ? newKanbanBoard : kanbanBoard);
 }
 
 function userListToAssign() {
